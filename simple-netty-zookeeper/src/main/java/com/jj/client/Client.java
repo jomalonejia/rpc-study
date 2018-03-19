@@ -1,6 +1,7 @@
 package com.jj.client;
 
 import com.jj.protocol.model.MessageRequest;
+import com.jj.server.ServerDiscovery;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -30,13 +31,11 @@ public class Client {
                         pipeline.addLast(new ObjectEncoder(),new ClientHandler());
                     }
                 });
-        ChannelFuture channelFuture = bootstrap.connect("localhost", 8080).sync();
-       /* *//*channelFuture.channel().writeAndFlush(*//**//*"777".getBytes()*//**//*Unpooled.copiedBuffer("777".getBytes()));*//*
-        *//*Command command =new Command();
-        command.setActionName("Hello action.");
-        channelFuture.channel().writeAndFlush(command);*//*
-        MessageRequest messageRequest = new MessageRequest();
-        messageRequest.setMessageId("aluba");*/
+        ServerDiscovery serverDiscovery = new ServerDiscovery("192.168.138.129:2181");
+        String discovery = serverDiscovery.discovery();
+        String[] address = discovery.split(":");
+        ChannelFuture channelFuture = bootstrap.connect(address[0], Integer.parseInt(address[1])).sync();
+
         channelFuture.channel().writeAndFlush(request);
         channelFuture.channel().closeFuture().sync();
         group.shutdownGracefully();

@@ -1,4 +1,4 @@
-package com.jj.model;
+package com.jj.protocol.model;
 
 import java.io.Serializable;
 
